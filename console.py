@@ -116,50 +116,61 @@ class HBNBCommand(cmd.Cmd):
         if len(command_passed) == 0:
             for key, value in all_objects.items():
                 print(str(value))
-            elif command_passed[0] not in self.all_classes:
-                print("** class doesn't exist **")
-            else:
-                for key, value in all_objects.items():
-                    if key.split('.')[0] == command_passed[0]:
-                        print(str(value))
+        elif command_passed[0] not in self.all_classes:
+            print("** class doesn't exist **")
+        else:
+            for key, value in all_objects.items():
+                if key.split('.')[0] == command_passed[0]:
+                    print(str(value))
 
     def do_update(self, arg):
         """
         Updates an instance based on the class name and id by adding or updating attribute
         """
+        
+        command_passed = shlex.split(arg)
 
+        if len(command_passed) == 0:
+            print("** class name missing **")
 
+        elif command_passed[0] not in self.all_classes:
+            print("** class doesn't exist **")
 
+        if len(command_passed) < 2:
+            print("** instance id missing **")
 
+        else:
+            all_objects = storage.all()
 
+            key = "{}.{}".format(command_passed[0], command_passed[1])
 
+            if key not in all_objects:
+                print("** no instance found **")
 
+            elif len(command_passed) < 3:
+                print("** attribute name missing **")
 
+            elif len(command_passed) <4:
+                print("** value missing **")
 
+            else:
 
+                inst_object = all_objects [key]
 
+                attribute_one = command_passed[2]
 
+                attribute_two = command_passed[3]
 
+                try:
+                    attribute_two = eval(attribute_two)
 
+                except Exception:
+                    pass
 
+                setattr(inst_object, attribute_one, attribute_two)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                inst_object.save()
+        
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
